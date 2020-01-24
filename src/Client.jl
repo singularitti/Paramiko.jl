@@ -2,6 +2,8 @@ module Client
 
 using PyCall: PyObject, PyAny, pycall
 
+import ..paramiko
+
 import PyCall: PyObject, pycall
 
 export SSHClient
@@ -13,6 +15,8 @@ export exec_command,
 mutable struct SSHClient
     o::PyObject
 end
+SSHClient() = SSHClient(paramiko.SSHClient())
+
 PyObject(f::SSHClient) = getfield(f, :o)
 convert(::Type{SSHClient}, o::PyObject) = SSHClient(o)
 ==(f::SSHClient, g::SSHClient) = PyObject(f) == PyObject(g)
