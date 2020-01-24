@@ -1,4 +1,4 @@
-module Client
+module Clients
 
 using PyCall: PyObject, PyAny, pycall
 
