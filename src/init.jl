@@ -1,6 +1,7 @@
 __precompile__() # this module is safe to precompile
 
 using PyCall
+using VersionParsing: vparse
 
 export paramiko
 
