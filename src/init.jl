@@ -16,6 +16,8 @@ function __init__()
             @eval using Pkg
             haskey(Pkg.installed(), "Conda") || @eval Pkg.add("Conda")
         catch
+            println("Installing `Conda.jl` failed! Please install by yourself!")
+            rethrow()
         end
         try
             @eval using Conda
