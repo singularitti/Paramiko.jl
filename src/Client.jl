@@ -45,7 +45,7 @@ gethostkeys(f::SSHClient) = PyObject(f).get_host_keys()
 gettransport(f::SSHClient) = PyObject(f).get_transport()
 invokeshell(f::SSHClient, args...; kws...) = PyObject(f).invoke_shell(args...; kws...)
 loadhostkeys(f::SSHClient, filename::AbstractString) = PyObject(f).load_host_keys(filename)
-load_system_host_keys(f::SSHClient, filename::AbstractString) = PyObject(f).load_system_host_keys(filename)
+load_system_host_keys(f::SSHClient, filename = nothing) = PyObject(f).load_system_host_keys(filename)
 opensftp(f::SSHClient) = PyObject(f).open_sftp()
 
 end # module Client
