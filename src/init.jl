@@ -1,10 +1,5 @@
 __precompile__() # this module is safe to precompile
 
-using Pkg
-
-ENV["PYTHON"]=""
-Pkg.build("PyCall")
-
 using PyCall
 
 export paramiko
