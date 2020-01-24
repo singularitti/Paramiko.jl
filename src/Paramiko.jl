@@ -1,5 +1,5 @@
 module Paramiko
 
-# Write your package code here.
+include("init.jl")
 
 end
