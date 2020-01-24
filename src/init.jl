@@ -1,6 +1,6 @@
 __precompile__() # this module is safe to precompile
 
-using PyCall: PyError, pyimport
+using PyCall: PyNULL, PyError, pyimport
 using VersionParsing: vparse
 
 export paramiko
