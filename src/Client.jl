@@ -4,6 +4,7 @@ using PyCall: PyObject, PyAny, pycall
 
 import ..paramiko
 
+import Sockets
 import PyCall: PyObject, pycall
 
 export SSHClient
@@ -35,7 +36,7 @@ Base.propertynames(f::SSHClient) = propertynames(PyObject(f))
 haskey(f::SSHClient, x) = haskey(PyObject(f), x)
 
 Base.close(f::SSHClient) = f.o.close()
-connect(f::SSHClient, hostname, args...; kws...) = f.o.connect(hostname, args...; kws...)
+Sockets.connect(f::SSHClient, hostname, args...; kws...) = f.o.connect(hostname, args...; kws...)
 exec_command(f::SSHClient, command::AbstractString, args...; kws...) = f.o.exec_command(command, args..., kws...)
 exec_command(f::SSHClient, command::Base.AbstractCmd, args...; kws...) = exec_command(f, string(command), args...; kws...)
 gethostkeys(f::SSHClient) = f.o.get_host_keys()
