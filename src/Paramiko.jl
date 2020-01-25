@@ -1,7 +1,7 @@
 module Paramiko
 
 include("init.jl")
-include("Client.jl")
+include("Clients.jl")
 include("transport.jl")
 
 end
