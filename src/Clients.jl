@@ -5,12 +5,12 @@ using Sockets: TCPSocket, UDPSocket
 # Import third-party packages
 using PyCall: PyObject, PyAny, pycall
 # Import local modules
-import ..paramiko
+using Paramiko: paramiko, pyinterface
 # Extending methods
 import Sockets
 import PyCall
 
-export SSHClient, SFTPClient
+export Tunnel, SSHClient, SFTPClient
 export exec_command,
     gethostkeys,
     gettransport,
@@ -19,6 +19,14 @@ export exec_command,
     load_system_host_keys,
     opensftp,
     chdir
+
+mutable struct Tunnel
+    o::PyObject
+end
+Tunnel(chanid::Integer) = Tunnel(paramiko.channel.Channel(chanid))
+
+fileno(f::Tunnel) = PyObject(f).fileno()
+invoke_shell(f::Tunnel, args...; kws...) = PyObject(f).invoke_shell(args...; kws...)
 
 # Wrapper around `paramiko.client.SSHClient`
 mutable struct SSHClient
@@ -54,31 +62,8 @@ listdir(f::SFTPClient, dir::AbstractString = ".") = PyObject(f).listdir(dir)
 Base.Filesystem.mkdir(f::SFTPClient, path::AbstractString; mode::Unsigned = 0o511) = PyObject(f).mkdir(path, mode)
 Base.put!(f::SFTPClient, localpath, remotepath, callback = nothing, confirm = true) = PyObject(f).put(localpath, remotepath, callback, confirm)
 
-for T in (:SSHClient, :SFTPClient)
-    eval(
-        quote
-            # Code from https://github.com/JuliaPy/PyPlot.jl/blob/6b38c75/src/PyPlot.jl#L54-L62
-            PyCall.PyObject(f::$T) = getfield(f, :o)
-            Base.convert(::Type{$T}, o::PyObject) = $T(o)
-            Base.:(==)(f::$T, g::$T) = PyObject(f) == PyObject(g)
-            Base.:(==)(f::$T, g::PyObject) = PyObject(f) == g
-            Base.:(==)(f::PyObject, g::$T) = f == PyObject(g)
-            Base.hash(f::$T) = hash(PyObject(f))
-            PyCall.pycall(f::$T, args...; kws...) = pycall(PyObject(f), args...; kws...)
-            (f::$T)(args...; kws...) = pycall(PyObject(f), PyAny, args...; kws...)
-            Base.Docs.doc(f::$T) = Base.Docs.doc(PyObject(f))
-            # Code from https://github.com/JuliaPy/PyPlot.jl/blob/6b38c75/src/PyPlot.jl#L65-L71
-            Base.getproperty(f::$T, s::Symbol) = getproperty(PyObject(f), s)
-            Base.getproperty(f::$T, s::AbstractString) = getproperty(PyObject(f), s)
-            Base.setproperty!(f::$T, s::Symbol, x) = setproperty!(PyObject(f), s, x)
-            Base.setproperty!(f::$T, s::AbstractString, x) = setproperty!(PyObject(f), s, x)
-            PyCall.hasproperty(f::$T, s::Symbol) = hasproperty(PyObject(f), s)
-            Base.propertynames(f::$T) = propertynames(PyObject(f))
-            Base.haskey(f::$T, x) = haskey(PyObject(f), x)
-            # Common methods
-            Base.close(f::$T) = PyObject(f).close()
-        end,
-    )
+for T in (:Tunnel, :SSHClient, :SFTPClient)
+    eval(pyinterface(T))
 end
 
 end # module Clients
