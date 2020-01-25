@@ -10,7 +10,7 @@ import ..paramiko
 import Sockets
 import PyCall
 
-export SSHClient, SFTPClient
+export Tunnel, SSHClient, SFTPClient
 export exec_command,
     gethostkeys,
     gettransport,
@@ -19,6 +19,14 @@ export exec_command,
     load_system_host_keys,
     opensftp,
     chdir
+
+mutable struct Tunnel
+    o::PyObject
+end
+Tunnel(chanid::Integer) = Tunnel(paramiko.channel.Channel(chanid))
+
+fileno(f::Tunnel) = PyObject(f).fileno()
+invoke_shell(f::Tunnel, args...; kws...) = PyObject(f).invoke_shell(args...; kws...)
 
 # Wrapper around `paramiko.client.SSHClient`
 mutable struct SSHClient
@@ -54,7 +62,7 @@ listdir(f::SFTPClient, dir::AbstractString = ".") = PyObject(f).listdir(dir)
 Base.Filesystem.mkdir(f::SFTPClient, path::AbstractString; mode::Unsigned = 0o511) = PyObject(f).mkdir(path, mode)
 Base.put!(f::SFTPClient, localpath, remotepath, callback = nothing, confirm = true) = PyObject(f).put(localpath, remotepath, callback, confirm)
 
-for T in (:SSHClient, :SFTPClient)
+for T in (:Tunnel, :SSHClient, :SFTPClient)
     eval(
         quote
             # Code from https://github.com/JuliaPy/PyPlot.jl/blob/6b38c75/src/PyPlot.jl#L54-L62
