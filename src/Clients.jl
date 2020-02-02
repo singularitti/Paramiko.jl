@@ -5,7 +5,7 @@ using Sockets: TCPSocket, UDPSocket
 # Import third-party packages
 using PyCall: PyObject, PyAny, pycall
 # Import local modules
-using Paramiko: paramiko, pyinterface
+using Paramiko: paramiko, @pyinterface
 # Extending methods
 import Sockets
 import PyCall
@@ -62,8 +62,8 @@ listdir(f::SFTPClient, dir::AbstractString = ".") = PyObject(f).listdir(dir)
 Base.Filesystem.mkdir(f::SFTPClient, path::AbstractString; mode::Unsigned = 0o511) = PyObject(f).mkdir(path, mode)
 Base.put!(f::SFTPClient, localpath, remotepath, callback = nothing, confirm = true) = PyObject(f).put(localpath, remotepath, callback, confirm)
 
-for T in (:Tunnel, :SSHClient, :SFTPClient)
-    eval(pyinterface(T))
-end
+@pyinterface Tunnel
+@pyinterface SSHClient
+@pyinterface SFTPClient
 
 end # module Clients

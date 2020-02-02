@@ -38,7 +38,9 @@ function __init__()
     end
 end
 
-function pyinterface(T::Symbol)
+macro pyinterface(T)
+    T = esc(T)
+    println(T)
     return quote
         # Code from https://github.com/JuliaPy/PyPlot.jl/blob/6b38c75/src/PyPlot.jl#L54-L62
         PyCall.PyObject(f::$T) = getfield(f, :o)
@@ -61,4 +63,4 @@ function pyinterface(T::Symbol)
         # Common methods
         Base.close(f::$T) = PyObject(f).close()
     end
-end # function pyinterface
+end # macro pyinterface
