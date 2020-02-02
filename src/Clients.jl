@@ -28,8 +28,10 @@ Tunnel(chanid::Integer) = Tunnel(paramiko.channel.Channel(chanid))
 fileno(f::Tunnel) = PyObject(f).fileno()
 invoke_shell(f::Tunnel, args...; kws...) = PyObject(f).invoke_shell(args...; kws...)
 
+abstract type Client end
+
 # Wrapper around `paramiko.client.SSHClient`
-mutable struct SSHClient
+mutable struct SSHClient <: Client
     o::PyObject
 end
 SSHClient() = SSHClient(paramiko.SSHClient())
@@ -45,7 +47,7 @@ loadhostkeys(f::SSHClient, filename::AbstractString) = PyObject(f).load_host_key
 load_system_host_keys(f::SSHClient, filename = nothing) = PyObject(f).load_system_host_keys(filename)
 opensftp(f::SSHClient) = PyObject(f).open_sftp()
 
-mutable struct SFTPClient
+mutable struct SFTPClient <: Client
     o::PyObject
 end
 SFTPClient(socket::Union{TCPSocket,UDPSocket}) = SFTPClient(paramiko.sftp_client.SFTPClient(socket))
@@ -57,8 +59,8 @@ Base.Filesystem.chown(f::SFTPClient, path::AbstractString, uid::Integer, gid::In
 Base.get(f::SFTPClient, remotepath, localpath, callback = nothing) = PyObject(f).get(remotepath, localpath, callback)
 Base.Filesystem.pwd(f::SFTPClient) = PyObject(f).getcwd()
 getcwd(f::SFTPClient) = PyObject(f).getcwd()
-Base.Filesystem.readdir(f::SFTPClient, dir::AbstractString = ".") = PyObject(f).listdir(dir)
-listdir(f::SFTPClient, dir::AbstractString = ".") = PyObject(f).listdir(dir)
+Base.Filesystem.readdir(f::SFTPClient, dir::Union{AbstractString,AbstractChar} = ".") = PyObject(f).listdir(dir)
+listdir(f::SFTPClient, dir::Union{AbstractString,AbstractChar} = ".") = PyObject(f).listdir(dir)
 Base.Filesystem.mkdir(f::SFTPClient, path::AbstractString; mode::Unsigned = 0o511) = PyObject(f).mkdir(path, mode)
 Base.put!(f::SFTPClient, localpath, remotepath, callback = nothing, confirm = true) = PyObject(f).put(localpath, remotepath, callback, confirm)
 
