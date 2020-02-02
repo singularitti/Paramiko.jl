@@ -40,7 +40,6 @@ end
 
 macro pyinterface(T)
     T = esc(T)
-    println(T)
     return quote
         # Code from https://github.com/JuliaPy/PyPlot.jl/blob/6b38c75/src/PyPlot.jl#L54-L62
         PyCall.PyObject(f::$T) = getfield(f, :o)
