@@ -13,7 +13,23 @@ This repository is created and maintained by
 
 ## Package features
 
+`Paramiko.jl` is a Foreign Function Interface (FFI) package for Julia, bridging the
+capabilities of the renowned Python package, Paramiko. With `Paramiko.jl`, Julia
+developers can directly utilize the robustness of Paramiko's SSHv2 protocol implementation
+without leaving the Julia environment.
 
+1. **SSHv2 Protocol in Julia**: Seamlessly use the SSHv2 protocol, implemented by
+   `paramiko`, within Julia.
+2. **Client and Server Functionality**: Both client and server sides of the SSH protocol are
+   available, giving you versatility in SSH operations.
+3. **Foundation for High-Level SSH Operations**: Built upon the same foundation as the
+   high-level SSH library, [Fabric](https://fabfile.org/). This provides potential pathways
+   for integrating advanced functionalities in the future.
+4. **Advanced/low-level Primitives**: For those requiring a deeper dive into SSH
+   functionalities, `Paramiko.jl` exposes the advanced and low-level primitives from
+   `paramiko`.
+5. **In-Python SSHD**: Run an in-Python sshd directly from Julia, offering an integrated
+   solution for SSH server deployment and testing.
 
 ## Installation
 
